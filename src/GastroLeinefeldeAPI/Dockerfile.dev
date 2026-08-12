@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+WORKDIR /src
+COPY src/GastroLeinefeldeAPI/GastroLeinefeldeAPI.csproj GastroLeinefeldeAPI/
+RUN dotnet restore GastroLeinefeldeAPI/GastroLeinefeldeAPI.csproj
+COPY src/GastroLeinefeldeAPI/ GastroLeinefeldeAPI/
+WORKDIR /src/GastroLeinefeldeAPI
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+CMD ["dotnet", "watch", "run", "--no-launch-profile"]

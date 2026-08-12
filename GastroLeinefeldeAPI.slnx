@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/GastroLeinefeldeAPI/GastroLeinefeldeAPI.csproj" />
+  <Project Path="src/GastroLeinefeldeAPI.Tests/GastroLeinefeldeAPI.Tests.csproj" />
+</Solution>

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gastro-api-config
+  namespace: gastro-api
+data:
+  ASPNETCORE_ENVIRONMENT: "Production"
+  POSTGRES_HOST: "postgres-service"  # Будет изменено при настройке БД
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "gastro_db"
