@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: ghcr.io/radixartem/gastro-api-k8s:REPLACE_WITH_COMMIT_SHA
+          image: ghcr.io/radixartem/gastro-api-k8s:82ed5e5
           imagePullPolicy: IfNotPresent
 
           ports:
