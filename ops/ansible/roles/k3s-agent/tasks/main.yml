@@ -1,0 +1,36 @@
+---
+- name: Determine primary K3s server inventory host
+  ansible.builtin.set_fact:
+    primary_k3s_server: "{{ groups['k3s_servers'][0] }}"
+
+
+- name: Check whether K3s agent is already installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/k3s-agent
+  register: k3s_agent_binary
+
+
+- name: Ensure K3S token is available
+  ansible.builtin.assert:
+    that:
+      - hostvars[primary_k3s_server].k3s_token is defined
+      - hostvars[primary_k3s_server].k3s_token | length > 0
+    fail_msg: >-
+      K3S token was not obtained from the primary server.
+      Ensure the k3s-server play completed successfully.
+
+
+- name: Install and join K3s agent
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    curl -sfL https://get.k3s.io | \
+      K3S_URL="{{ k3s_api_url }}" \
+      K3S_TOKEN="{{ hostvars[primary_k3s_server].k3s_token }}" \
+      INSTALL_K3S_EXEC="agent \
+        --node-ip={{ private_ip }}" \
+      sh -
+  args:
+    executable: /bin/bash
+  when: not k3s_agent_binary.stat.exists
+  changed_when: true

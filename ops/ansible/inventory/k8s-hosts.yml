@@ -1,0 +1,37 @@
+all:
+  vars:
+    ansible_user: root
+
+    cluster_name: gastro-prod
+
+    # Public IPv4 of the existing Hetzner Load Balancer.
+    # Used in K3s API certificate SAN.
+    k3s_tls_san: "65.109.40.97"
+
+    # Private control-plane address.
+    k3s_server_private_ip: "10.42.1.10"
+
+    # Agents join through the private network.
+    k3s_api_url: "https://10.42.1.10:6443"
+
+    k3s_version: ""
+
+    ansible_ssh_common_args: >-
+      -o StrictHostKeyChecking=accept-new
+
+  children:
+    k3s_servers:
+      hosts:
+        gastro-prod-server-01:
+          ansible_host: "62.238.60.172"
+          private_ip: "10.42.1.10"
+
+    k3s_agents:
+      hosts:
+        gastro-prod-agent-01:
+          ansible_host: "65.21.250.20"
+          private_ip: "10.42.1.30"
+
+        gastro-prod-agent-02:
+          ansible_host: "77.42.69.178"
+          private_ip: "10.42.1.31"

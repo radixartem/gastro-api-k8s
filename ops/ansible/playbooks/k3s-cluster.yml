@@ -1,0 +1,62 @@
+---
+- name: Prepare all Kubernetes nodes
+  hosts: all
+  become: true
+  gather_facts: true
+
+  roles:
+    - common
+
+
+- name: Bootstrap K3s control plane
+  hosts: k3s_servers
+  become: true
+  gather_facts: true
+  serial: 1
+
+  roles:
+    - k3s-server
+
+
+- name: Join K3s agents
+  hosts: k3s_agents
+  become: true
+  gather_facts: true
+
+  roles:
+    - k3s-agent
+
+
+- name: Verify Kubernetes cluster
+  hosts: k3s_servers[0]
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Wait for all nodes to become Ready
+      ansible.builtin.command:
+        argv:
+          - /usr/local/bin/k3s
+          - kubectl
+          - wait
+          - --for=condition=Ready
+          - node
+          - --all
+          - --timeout=180s
+      changed_when: false
+
+    - name: Get cluster nodes
+      ansible.builtin.command:
+        argv:
+          - /usr/local/bin/k3s
+          - kubectl
+          - get
+          - nodes
+          - -o
+          - wide
+      register: cluster_nodes
+      changed_when: false
+
+    - name: Display cluster nodes
+      ansible.builtin.debug:
+        var: cluster_nodes.stdout_lines

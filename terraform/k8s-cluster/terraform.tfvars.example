@@ -1,0 +1,35 @@
+# Hetzner Cloud API token.
+# Prefer passing this through the environment:
+#
+# export TF_VAR_hcloud_token="your-token"
+#
+# Do not commit a real token.
+# hcloud_token = "your-token"
+
+cluster_name = "gastro-prod"
+environment  = "production"
+
+# Hetzner location.
+location     = "fsn1"
+network_zone = "eu-central"
+
+# IMPORTANT:
+# Replace with your current public IP in CIDR notation.
+admin_ip = "YOUR.PUBLIC.IP.ADDRESS/32"
+
+# Private cluster network.
+network_ip_range        = "10.42.0.0/16"
+network_subnet_ip_range = "10.42.1.0/24"
+
+# K3s control plane.
+k3s_server_count = 1
+k3s_server_type  = "cx23"
+
+# K3s workers.
+k3s_agent_count = 2
+k3s_agent_type  = "cx23"
+
+server_image = "ubuntu-24.04"
+
+# Hetzner Load Balancer.
+load_balancer_type = "lb11"

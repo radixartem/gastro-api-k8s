@@ -1,0 +1,45 @@
+---
+- name: Check whether K3s server is already installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/k3s
+  register: k3s_binary
+
+- name: Install K3s server
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    curl -sfL https://get.k3s.io | \
+    INSTALL_K3S_EXEC="server \
+      --node-ip={{ private_ip }} \
+      --advertise-address={{ private_ip }} \
+      --tls-san={{ k3s_tls_san }} \
+      --cluster-cidr=10.244.0.0/16 \
+      --service-cidr=10.96.0.0/16 \
+      --write-kubeconfig-mode=600" \
+    sh -
+  args:
+    executable: /bin/bash
+  when: not k3s_binary.stat.exists
+  changed_when: true
+
+- name: Wait for K3s server API
+  ansible.builtin.wait_for:
+    host: "{{ private_ip }}"
+    port: 6443
+    delay: 2
+    timeout: 180
+
+- name: Wait for K3s node token
+  ansible.builtin.wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+    timeout: 180
+
+- name: Read K3S node token
+  ansible.builtin.slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: k3s_token_file
+
+- name: Store K3S token as host fact
+  ansible.builtin.set_fact:
+    k3s_token: "{{ k3s_token_file.content | b64decode | trim }}"
+    cacheable: false
