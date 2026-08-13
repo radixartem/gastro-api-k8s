@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gastro-api-migrations
+  namespace: gastro-api
+spec:
+  backoffLimit: 6
+
+  template:
+    metadata:
+      labels:
+        app: gastro-api-migrations
+
+    spec:
+      restartPolicy: OnFailure
+
+      containers:
+        - name: migrations
+          image: ghcr.io/radixartem/gastro-api:latest
+          imagePullPolicy: Always
+
+          envFrom:
+            - configMapRef:
+                name: gastro-api-config
+            - secretRef:
+                name: gastro-api-secrets
+
+          env:
+            - name: ApplyMigrations
+              value: "true"

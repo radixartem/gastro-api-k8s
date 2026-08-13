@@ -509,3 +509,11 @@ override.tf.json
 *_override.tf.json
 
 venv/
+
+# Production Kubernetes secrets
+k8s/secrets/*.env
+k8s/secrets/*.yaml
+
+# Keep examples tracked
+!k8s/secrets/*.example.env
+!k8s/secrets/*.example.yaml

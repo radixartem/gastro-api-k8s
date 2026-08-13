@@ -5,6 +5,6 @@ metadata:
   namespace: gastro-api
 data:
   ASPNETCORE_ENVIRONMENT: "Production"
-  POSTGRES_HOST: "postgres-service"  # Будет изменено при настройке БД
-  POSTGRES_PORT: "5432"
-  POSTGRES_DB: "gastro_db"
+
+  # API must not execute EF migrations itself.
+  ApplyMigrations: "false"
