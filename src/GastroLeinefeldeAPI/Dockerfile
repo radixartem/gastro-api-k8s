@@ -1,26 +1,39 @@
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+
 WORKDIR /src
 
-COPY src/GastroLeinefeldeAPI/GastroLeinefeldeAPI.csproj GastroLeinefeldeAPI/
-RUN dotnet restore GastroLeinefeldeAPI/GastroLeinefeldeAPI.csproj
+COPY src/GastroLeinefeldeAPI/GastroLeinefeldeAPI.csproj \
+     src/GastroLeinefeldeAPI/
 
-COPY src/GastroLeinefeldeAPI/ GastroLeinefeldeAPI/
+RUN dotnet restore src/GastroLeinefeldeAPI/GastroLeinefeldeAPI.csproj
+
+COPY src/ .
+
 WORKDIR /src/GastroLeinefeldeAPI
-RUN dotnet publish -c Release -o /app/publish --no-restore --self-contained false
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+RUN dotnet publish \
+    -c Release \
+    -o /app/publish \
+    --no-restore
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+
 WORKDIR /app
-ENV ASPNETCORE_URLS=http://+:8080
+
+RUN adduser \
+    --disabled-password \
+    --gecos '' \
+    appuser \
+    && chown -R appuser:appuser /app
+
+COPY --from=build /app/publish .
+
+USER appuser
+
 EXPOSE 8080
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/* \
-    && groupadd -r -g 10001 appgroup \
-    && useradd -r -u 10001 -g appgroup appuser
-        
-COPY --from=build /app/publish .
-RUN chown -R appuser:appgroup /app
-USER appuser
+ENV ASPNETCORE_URLS=http://+:8080
 
 ENTRYPOINT ["dotnet", "GastroLeinefeldeAPI.dll"]

@@ -18,9 +18,9 @@ spec:
       restartPolicy: OnFailure
 
       containers:
-        - name: migrations
-          image: ghcr.io/radixartem/gastro-api:latest
-          imagePullPolicy: Always
+        - name: api
+          image: ghcr.io/radixartem/gastro-api-k8s:REPLACE_WITH_COMMIT_SHA
+          imagePullPolicy: IfNotPresent
 
           envFrom:
             - configMapRef:
