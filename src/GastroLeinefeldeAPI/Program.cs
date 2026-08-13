@@ -57,16 +57,21 @@ builder.Services.AddHealthChecks()
 
 var app = builder.Build();
 
-var applyMigrations =
-    builder.Configuration.GetValue("ApplyMigrations", false);
+var applyMigrations = builder.Configuration.GetValue("ApplyMigrations", false);
+var migrationOnly = builder.Configuration.GetValue("MigrationOnly", false);
 
 if (applyMigrations)
 {
-    await using var scope = app.Services.CreateAsyncScope();
+    using var scope = app.Services.CreateScope();
 
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
     await db.Database.MigrateAsync();
+}
+
+if (migrationOnly)
+{
+    return;
 }
 
 app.UseSwagger();

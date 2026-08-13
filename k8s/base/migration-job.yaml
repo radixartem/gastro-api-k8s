@@ -3,6 +3,9 @@ kind: Job
 metadata:
   name: gastro-api-migrations
   namespace: gastro-api
+  labels:
+    app: gastro-api-migrations
+
 spec:
   backoffLimit: 6
 
@@ -28,3 +31,15 @@ spec:
           env:
             - name: ApplyMigrations
               value: "true"
+
+            - name: MigrationOnly
+              value: "true"
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
