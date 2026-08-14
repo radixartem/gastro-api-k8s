@@ -22,12 +22,13 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 
 WORKDIR /app
 
-RUN adduser \
-    --disabled-password \
-    --gecos '' \
+RUN useradd \
+    --system \
+    --create-home \
+    --shell /usr/sbin/nologin \
     appuser \
     && chown -R appuser:appuser /app
-
+    
 COPY --from=build /app/publish .
 
 USER appuser
