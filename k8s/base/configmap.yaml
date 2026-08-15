@@ -3,8 +3,9 @@ kind: ConfigMap
 metadata:
   name: gastro-api-config
   namespace: gastro-api
+
 data:
   ASPNETCORE_ENVIRONMENT: "Production"
+  ASPNETCORE_URLS: "http://+:8080"
 
-  # API must not execute EF migrations itself.
   ApplyMigrations: "false"

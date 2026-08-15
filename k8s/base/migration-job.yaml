@@ -19,7 +19,7 @@ spec:
 
       containers:
         - name: api
-          image: ghcr.io/radixartem/gastro-api-k8s:69e32d0
+          image: ghcr.io/radixartem/gastro-api-k8s:62c22db
           imagePullPolicy: Always
 
           envFrom:
