@@ -40,3 +40,4 @@ COPY --from=build /app/publish .
 USER appuser
 
 ENTRYPOINT ["dotnet", "GastroLeinefeldeAPI.dll"]
+
